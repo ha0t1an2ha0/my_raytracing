@@ -51,7 +51,7 @@ public:
         std::clog << "\rDone.                 \n";
     } */
 
-    void render(const hittable& world) {
+    void render(const hittable& world, const hittable& lights) {
         // 初始化相机参数
         initialize();
 
@@ -111,7 +111,7 @@ public:
                 for (int s_i = 0; s_i < sqrt_spp; ++s_i) {
                     for (int s_j = 0; s_j < sqrt_spp; ++s_j) {
                         ray r = get_ray(i, j, s_i, s_j);
-                        pixel_color += ray_color(r, depth_max, world);
+                        pixel_color += ray_color(r, depth_max, world, lights);
                     }
                 }
                 pixel_color *= pixel_samples_scale;
@@ -215,7 +215,7 @@ private:
 
     //着色
     //规定了递归深度,忽略精度误差导致的过近的交点
-    color ray_color(const ray& r, int depth, const hittable& world) const {
+    color ray_color(const ray& r, int depth, const hittable& world, const hittable& lights) const {
         if (depth <= 0)return color(0.0, 0.0, 0.0);
         hit_record rec{};
         //光线不与任何物体有交点，返回背景色
@@ -223,17 +223,72 @@ private:
             return background;
         }
 
-        ray scattered;
-        color attenuation;
-        color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
+        scatter_record srec;
+
+        color color_from_emission = rec.mat->emitted(r, rec, rec.u, rec.v, rec.p);
         //光线不产生反射光，说明射入光源，返回光源照亮
-        if (!rec.mat->scatter(r, rec, attenuation, scattered)) {
+        if (!rec.mat->scatter(r, rec, srec)) {
             return color_from_emission;
         }
 
-        color color_from_scatter = attenuation * ray_color(scattered, depth - 1, world);
+        if (srec.skip_pdf) {
+            return srec.attenuation * ray_color(srec.skip_pdf_ray, depth - 1, world, lights);
+        }
+
+        auto light_ptr = make_shared<hittable_pdf>(lights, rec.p);
+        mixture_pdf p(light_ptr, srec.pdf_ptr);
+
+        ray scattered = ray(rec.p, p.generate(), r.time());
+        auto pdf_val = p.value(scattered.direction());
+
+        double scattering_pdf = rec.mat->scattering_pdf(r, rec, scattered);
+        //double pdf = scattering_pdf;
+
+        color color_from_scatter = (srec.attenuation * scattering_pdf * ray_color(scattered, depth - 1, world, lights)) / pdf_val;
         return color_from_emission + color_from_scatter;
     }
+    /*     color ray_color(const ray& r, int depth, const hittable& world) const {
+            // If we've exceeded the ray bounce limit, no more light is gathered.
+            if (depth <= 0)
+                return color(0,0,0);
+
+            hit_record rec;
+
+            // If the ray hits nothing, return the background color.
+            if (!world.hit(r, interval(0.001, infinity), rec))
+                return background;
+
+            ray scattered;
+            color attenuation;
+            double pdf;
+            color color_from_emission = rec.mat->emitted(r, rec, rec.u, rec.v, rec.p);
+
+            if (!rec.mat->scatter(r, rec, attenuation, scattered, pdf))
+                return color_from_emission;
+
+            auto on_light = point3(random_double(213,343), 554, random_double(227,332));
+            auto to_light = on_light - rec.p;
+            auto distance_squared = to_light.length_squared();
+            to_light = normalize(to_light);
+
+            if (dot(to_light, rec.normal) < 0)
+                return color_from_emission;
+
+            double light_area = (343-213)*(332-227);
+            auto light_cosine = fabs(to_light.y());
+            if (light_cosine < 0.000001)
+                return color_from_emission;
+
+            pdf = distance_squared / (light_cosine * light_area);
+            scattered = ray(rec.p, to_light, r.time());
+
+            double scattering_pdf = rec.mat->scattering_pdf(r, rec, scattered);
+
+            color color_from_scatter =
+                (attenuation * scattering_pdf * ray_color(scattered, depth-1, world)) / pdf;
+
+            return color_from_emission + color_from_scatter;
+        } */
 };
 
 #endif

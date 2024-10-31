@@ -1,3 +1,3 @@
-/mnt/c/Users/haotian.zhao/source/repos/my_raytracing/build/CMakeFiles/zrt.dir
-/mnt/c/Users/haotian.zhao/source/repos/my_raytracing/build/CMakeFiles/edit_cache.dir
-/mnt/c/Users/haotian.zhao/source/repos/my_raytracing/build/CMakeFiles/rebuild_cache.dir
+C:/Users/haotian.zhao/source/repos/my_raytracing/build/CMakeFiles/zrt.dir
+C:/Users/haotian.zhao/source/repos/my_raytracing/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/haotian.zhao/source/repos/my_raytracing/build/CMakeFiles/ZERO_CHECK.dir

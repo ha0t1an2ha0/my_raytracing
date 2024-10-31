@@ -193,9 +193,12 @@ CMakeFiles/zrt.dir/src/main.cc.o: \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/vec3.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/interval.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/color.h \
- /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/sphere.h \
+ /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/onb.h \
+ /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/pdf.h \
+ /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/hittable_list.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/hittable.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/aabb.h \
+ /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/sphere.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/constant_medium.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/material.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/texture.h \
@@ -204,7 +207,6 @@ CMakeFiles/zrt.dir/src/main.cc.o: \
  /usr/include/c++/11/stdlib.h /usr/include/string.h \
  /usr/include/strings.h /usr/include/c++/11/math.h /usr/include/assert.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/perlin.h \
- /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/hittable_list.h \
  /mnt/c/Users/haotian.zhao/source/repos/my_raytracing/src/camera.h \
  /usr/include/c++/11/iomanip /usr/include/c++/11/locale \
  /usr/include/c++/11/bits/locale_facets_nonio.h \

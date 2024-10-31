@@ -15,6 +15,7 @@ private:
     vec3 normal;//四边形所在平面的单位法向量
     double D;//所在平面的隐式公式Ax+By+Cz=D中的D
     vec3 w;//求交计算，需要首先计算光线与所在平面的交，然后求出交点在向量uv坐标下的坐标值，判断是否落在[0,1]^2来决定是否与四边形相交，w用来方便计算坐标值
+    double area;
 
 public:
     quad(point3 q, vec3 u, vec3 v, shared_ptr<material> mat) :Q{ q }, u{ u }, v{ v }, mat{ mat } {
@@ -23,6 +24,7 @@ public:
         normal = normalize(n);
         D = dot(normal, Q);
         w = n / dot(n, n);
+        area = n.length();
     }
 
     virtual void set_bounding_box() {
@@ -67,6 +69,21 @@ public:
         return true;
     }
 
+    double pdf_value(const point3& origin, const vec3& direction) const override {
+        hit_record rec;
+        if (!this->hit(ray(origin, direction), interval(0.001, infinity), rec))
+            return 0;
+
+        auto distance_squared = rec.t * rec.t * direction.length_squared();
+        auto cosine = fabs(dot(direction, rec.normal) / direction.length());
+
+        return distance_squared / (cosine * area);
+    }
+
+    vec3 random(const point3& origin) const override {
+        auto p = Q + (random_double() * u) + (random_double() * v);
+        return p - origin;
+    }
 };
 
 inline shared_ptr<hittable_list> box(const point3& a, const point3& b, shared_ptr<material> mat) {
